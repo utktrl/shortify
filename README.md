@@ -1,24 +1,50 @@
-# Getting Started
+# Shortify - URL Shortener API
 
-### Reference Documentation
-For further reference, please consider the following sections:
+### Overview
+This is a URL Shortener API built with Kotlin and Spring Boot. 
+It provides a RESTful interface to shorten long URLs and retrieve the original URLs.
 
-* [Official Gradle documentation](https://docs.gradle.org)
-* [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/3.4.3/gradle-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.4.3/gradle-plugin/packaging-oci-image.html)
-* [Spring Data JDBC](https://docs.spring.io/spring-boot/3.4.3/reference/data/sql.html#data.sql.jdbc)
-* [Spring Web](https://docs.spring.io/spring-boot/3.4.3/reference/web/servlet.html)
+### Features
+* Shorten URLs: Generate a short URL from a long URL.
 
-### Guides
-The following guides illustrate how to use some features concretely:
+* Retrieve URLs: Resolve a short URL to its original form.
 
-* [Using Spring Data JDBC](https://github.com/spring-projects/spring-data-examples/tree/master/jdbc/basics)
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
+* Base62 Encoding: Efficient and readable URL identifiers.
 
-### Additional Links
-These additional references should also help you:
+* In-Memory Storage: Uses a concurrent hash map for quick lookups (easily extendable to a database).
 
-* [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
+Validation: Ensures input URLs are valid before processing.
 
+### API Endpoints
+1. Shorten a URL
+
+Request Body: 
+```
+{
+  "longUrl": "https://example.com/some/long/url"
+}
+```
+
+Response Body:
+```
+{
+  "shortUrl": "http://localhost:8080/a1B3c"
+}
+```
+
+2. Expand a Short URL
+
+Endpoint: GET /{short_id}
+
+### Running the Project Locally
+
+```
+./gradlew bootRun
+```
+The API will be available at http://localhost:8080
+
+### Executing E2E Tests
+
+```
+./gradlew test
+```

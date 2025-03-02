@@ -6,7 +6,6 @@ import de.dkb.api.shortify.exception.InvalidUrlException
 import org.springframework.stereotype.Service
 import java.net.URI
 import java.security.SecureRandom
-import java.util.*
 import kotlin.math.absoluteValue
 
 @Service

@@ -1,5 +1,7 @@
 package de.dkb.api.shortify.service
 
+import de.dkb.api.shortify.datasource.UrlMapping
+import de.dkb.api.shortify.datasource.UrlMappingRepository
 import de.dkb.api.shortify.exception.InvalidUrlException
 import org.springframework.stereotype.Service
 import java.net.URI
@@ -8,9 +10,10 @@ import java.util.*
 import kotlin.math.absoluteValue
 
 @Service
-class UrlShortenerService {
+class UrlShortenerService (
+    private val urlMappingRepository: UrlMappingRepository
+) {
 
-    private val urlStorage: MutableMap<String, String> = mutableMapOf()
     private val random = SecureRandom() // Use SecureRandom for better randomness
     private val minShortCodeLength = 6 // Minimum length of the short code
 
@@ -21,9 +24,14 @@ class UrlShortenerService {
 
         // Generate a random short code
         val shortCode = generateRandomShortCode()
-        urlStorage[shortCode] = longUrl
 
-        return "http://localhost:8080/$shortCode"
+        val shortUrl = "http://localhost:8080/$shortCode"
+
+        // Save to Database
+        val urlMapping = UrlMapping(longUrl = longUrl, shortUrl = shortUrl)
+        urlMappingRepository.save(urlMapping)
+
+        return shortUrl
     }
 
     private fun isValidUrl(url: String): Boolean {

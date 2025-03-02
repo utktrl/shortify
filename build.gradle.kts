@@ -28,6 +28,8 @@ dependencies {
 	testImplementation("io.karatelabs:karate-junit5:1.5.1")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.postgresql:postgresql")
 }
 
 kotlin {

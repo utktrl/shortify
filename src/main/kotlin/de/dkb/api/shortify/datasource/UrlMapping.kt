@@ -17,4 +17,7 @@ data class UrlMapping(
 
     @Column(nullable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
-)
+){
+    // No-argument constructor
+    constructor() : this(null, "", "", LocalDateTime.now())
+}

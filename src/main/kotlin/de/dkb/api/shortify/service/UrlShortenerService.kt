@@ -21,6 +21,12 @@ class UrlShortenerService (
             throw InvalidUrlException("Invalid URL format. Please provide a valid URL.")
         }
 
+        // Check if the longUrl already exists
+        val existingMapping = urlMappingRepository.findByLongUrl(longUrl)
+        if (existingMapping != null) {
+            return existingMapping.shortUrl
+        }
+
         // Generate a random short code
         val shortCode = generateRandomShortCode()
 

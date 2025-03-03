@@ -1,7 +1,6 @@
 package de.dkb.api.shortify.controller
 
 import de.dkb.api.shortify.service.UrlShortenerService
-import org.springframework.web.servlet.view.RedirectView
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 

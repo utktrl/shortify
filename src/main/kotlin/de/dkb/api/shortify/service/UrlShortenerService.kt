@@ -3,19 +3,23 @@ package de.dkb.api.shortify.service
 import de.dkb.api.shortify.datasource.UrlMapping
 import de.dkb.api.shortify.datasource.UrlMappingRepository
 import de.dkb.api.shortify.exception.InvalidUrlException
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
+import java.math.BigInteger
 import java.net.URI
+import java.security.MessageDigest
 import java.security.SecureRandom
 import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 @Service
 class UrlShortenerService (
     private val urlMappingRepository: UrlMappingRepository
 ) {
 
-    private val random = SecureRandom() // Use SecureRandom for better randomness
-    private val minShortCodeLength = 6 // Minimum length of the short code
+    @Value("\${app.base-url}")  // Inject the base URL from configuration
+    private lateinit var baseUrl: String
 
     fun shortenUrl(longUrl: String): String {
         if (!isValidUrl(longUrl)) {
@@ -29,15 +33,15 @@ class UrlShortenerService (
         }
 
         // Generate a random short code
-        val shortCode = generateRandomShortCode()
-
-        val shortUrl = "http://localhost:8080/$shortCode"
+        val hash = sha256(longUrl)
+        val sha256Encoded = base62Encode(hash)
+        val shortUrl = random7Chars(sha256Encoded)
 
         // Save to Database
         val urlMapping = UrlMapping(longUrl = longUrl, shortUrl = shortUrl)
         urlMappingRepository.save(urlMapping)
 
-        return shortUrl
+        return "$baseUrl/$shortUrl"
     }
 
     @Cacheable(value = ["shortUrls"], key = "#shortCode")
@@ -57,23 +61,31 @@ class UrlShortenerService (
         return (uri.scheme == "http" || uri.scheme == "https") && !uri.host.isNullOrEmpty()
     }
 
-    private fun generateRandomShortCode(): String {
-        val characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        val base = characters.length
-        val shortCode = StringBuilder()
+    // Base62 characters
+    private val base62Chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray()
 
-        // Generate a random number and encode it in base62
-        var randomNumber = random.nextLong().absoluteValue // Ensure the number is positive
-        while (randomNumber > 0) {
-            shortCode.append(characters[(randomNumber % base).toInt()])
-            randomNumber /= base
+    // Function to hash the URL using SHA-256
+    private fun sha256(input: String): String {
+        val bytes = MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
+        return bytes.joinToString("") { "%02x".format(it) }
+    }
+
+    // Function to encode a hex string to Base62
+    private fun base62Encode(hex: String): String {
+        var value = BigInteger(hex, 16)
+        val result = StringBuilder()
+        while (value > BigInteger.ZERO) {
+            val remainder = value.mod(BigInteger.valueOf(62))
+            result.append(base62Chars[remainder.toInt()])
+            value = value.divide(BigInteger.valueOf(62))
         }
+        return result.reverse().toString()
+    }
 
-        // If the short code is shorter than the minimum length, pad it with random characters
-        while (shortCode.length < minShortCodeLength) {
-            shortCode.append(characters[random.nextInt(base)])
-        }
-
-        return shortCode.toString()
+    // Function to get a random 7-character substring
+    private fun random7Chars(input: String): String {
+        val random = Random
+        val startIndex = random.nextInt(input.length - 7)
+        return input.substring(startIndex, startIndex + 7)
     }
 }

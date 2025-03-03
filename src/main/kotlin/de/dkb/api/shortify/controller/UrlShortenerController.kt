@@ -1,19 +1,24 @@
 package de.dkb.api.shortify.controller
 
 import de.dkb.api.shortify.service.UrlShortenerService
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.servlet.view.RedirectView
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 class UrlShortenerController(private val urlShortenerService: UrlShortenerService) {
 
-    @PostMapping("/shorten")
+    @PostMapping("/api/shorten")
     fun shortenUrl(@RequestBody request: ShortenUrlRequest): ShortenUrlResponse {
         val shortUrl = urlShortenerService.shortenUrl(request.longUrl)
         return ShortenUrlResponse(shortUrl)
+    }
+
+    @GetMapping("/{shortCode}")
+    fun urlLookup(@PathVariable shortCode: String): ResponseEntity<out Any> {
+        val longUrl = urlShortenerService.getLongUrl(shortCode)
+        return ResponseEntity.ok(longUrl)
     }
 
     data class ShortenUrlRequest(val longUrl: String)

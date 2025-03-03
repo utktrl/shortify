@@ -39,6 +39,15 @@ class UrlShortenerService (
         return shortUrl
     }
 
+    fun getLongUrl(shortCode: String): String? {
+        val shortUrl = "http://localhost:8080/$shortCode"
+        return urlMappingRepository.findByShortUrl(shortUrl)?.longUrl
+    }
+
+    fun getOriginalUrl(shortCode: String): String {
+        return urlMappingRepository.findByShortUrl(shortCode).toString()
+    }
+
     private fun isValidUrl(url: String): Boolean {
         val urlPattern = Regex("^(https?)://[a-zA-Z0-9.-]+(?:\\.[a-zA-Z]{2,})+.*$")
 

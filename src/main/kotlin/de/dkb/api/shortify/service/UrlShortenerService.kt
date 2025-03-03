@@ -35,18 +35,19 @@ class UrlShortenerService (
         // Generate a random short code
         val hash = sha256(longUrl)
         val sha256Encoded = base62Encode(hash)
-        val shortUrl = random7Chars(sha256Encoded)
+        val shortCode = random7Chars(sha256Encoded)
+        val shortUrl = "$baseUrl/$shortCode"
 
         // Save to Database
         val urlMapping = UrlMapping(longUrl = longUrl, shortUrl = shortUrl)
         urlMappingRepository.save(urlMapping)
 
-        return "$baseUrl/$shortUrl"
+        return shortUrl
     }
 
     @Cacheable(value = ["shortUrls"], key = "#shortCode")
     fun getLongUrl(shortCode: String): String? {
-        val shortUrl = "http://localhost:8080/$shortCode"
+        val shortUrl = "$baseUrl/$shortCode"
         return urlMappingRepository.findByShortUrl(shortUrl)?.longUrl
     }
 

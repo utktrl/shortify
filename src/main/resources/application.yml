@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local
   datasource:
     url: jdbc:postgresql://localhost:5432/springboot
     username: admin
@@ -14,3 +16,5 @@ spring:
     redis:
       host: localhost
       port: 6379
+app:
+  base-url: "http://localhost:8080"

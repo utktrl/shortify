@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service
 import java.math.BigInteger
 import java.net.URI
 import java.security.MessageDigest
-import java.security.SecureRandom
-import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 @Service

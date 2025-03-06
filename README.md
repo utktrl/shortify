@@ -11,8 +11,6 @@ It provides a RESTful interface to shorten long URLs and retrieve the original U
 
 * Base62 Encoding: Efficient and readable URL identifiers.
 
-* In-Memory Storage: Uses a concurrent hash map for quick lookups (easily extendable to a database).
-
 Validation: Ensures input URLs are valid before processing.
 
 ### API Endpoints
@@ -37,6 +35,12 @@ Response Body:
 Endpoint: GET /{short_id}
 
 ### Running the Project Locally
+
+First run docker compose to create the Database and Redis
+```
+docker compose up
+```
+Then run bootRun
 
 ```
 ./gradlew bootRun

@@ -10,6 +10,10 @@ import java.time.LocalDateTime
 @ControllerAdvice
 class GlobalExceptionHandler {
 
+    /**
+     * GlobalExceptionHandler maps exceptions to JSON responses
+     */
+
     @ExceptionHandler(InvalidUrlException::class)
     fun handleInvalidUrlException(ex: InvalidUrlException, request: WebRequest): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse(

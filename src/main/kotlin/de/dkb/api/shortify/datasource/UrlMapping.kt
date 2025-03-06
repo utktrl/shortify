@@ -3,6 +3,9 @@ package de.dkb.api.shortify.datasource
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
+/**
+ * Database Tables for the long short URL mapping
+ */
 @Entity
 data class UrlMapping(
     @Id
@@ -18,6 +21,6 @@ data class UrlMapping(
     @Column(nullable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
 ){
-    // No-argument constructor
+
     constructor() : this(null, "", "", LocalDateTime.now())
 }

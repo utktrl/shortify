@@ -21,7 +21,7 @@ Validation: Ensures input URLs are valid before processing.
 Request Body: 
 ```
 {
-  "longUrl": "https://example.com/some/long/url"
+  "longUrl": "https://www.dkb.de/fragen-antworten/ich-kann-mich-nicht-im-banking-anmelden-was-nun"
 }
 ```
 

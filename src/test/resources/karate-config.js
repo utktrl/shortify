@@ -3,7 +3,7 @@ function fn() {
     karate.log('karate.env system property was:', env);
 
     var config = { // base config JSON
-        baseURL: 'https://localhost:8080',
+        baseURL: 'http://localhost:8080',
     };
     if (env == 'stage') {
         // over-ride only those that need to be

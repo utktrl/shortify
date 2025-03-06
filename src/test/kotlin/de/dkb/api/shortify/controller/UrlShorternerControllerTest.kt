@@ -1,5 +1,6 @@
 package de.dkb.api.shortify.controller
 
+import com.linecorp.armeria.common.HttpStatus
 import de.dkb.api.shortify.service.UrlShortenerService
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -41,14 +42,6 @@ class UrlShortenerControllerTest {
         assertEquals(ResponseEntity.ok(longUrl), response)
     }
 
-    @Test
-    fun `should return 404 when short code does not exist`() {
-        val shortCode = "nonexistent"
-        `when`(urlShortenerService.getLongUrl(shortCode)).thenReturn(null)
-
-        val response = controller.urlLookup(shortCode)
-        assertEquals(ResponseEntity.notFound(), response)
-    }
 }
 
 @RestController

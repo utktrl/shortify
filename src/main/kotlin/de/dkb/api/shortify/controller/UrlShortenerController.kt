@@ -21,16 +21,9 @@ class UrlShortenerController(private val urlShortenerService: UrlShortenerServic
     }
 
     @GetMapping("/{shortCode}")
-    fun urlLookup(@PathVariable shortCode: String): ResponseEntity<out Any> {
-        logger.info("Looking up short code: ${'$'}shortCode")
+    fun urlLookup(@PathVariable shortCode: String): ResponseEntity<String> {
         val longUrl = urlShortenerService.getLongUrl(shortCode)
-        return if (longUrl.isNullOrEmpty()) {
-            logger.warn("Short code ${'$'}shortCode not found")
-            ResponseEntity.notFound().build()
-        } else {
-            logger.info("Found long URL: ${'$'}longUrl for short code: ${'$'}shortCode")
-            ResponseEntity.ok(longUrl)
-        }
+        return ResponseEntity.ok(longUrl)
     }
 
     data class ShortenUrlRequest(val longUrl: String)

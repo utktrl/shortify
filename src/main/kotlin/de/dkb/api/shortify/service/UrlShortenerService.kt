@@ -3,6 +3,7 @@ package de.dkb.api.shortify.service
 import de.dkb.api.shortify.datasource.UrlMapping
 import de.dkb.api.shortify.datasource.UrlMappingRepository
 import de.dkb.api.shortify.exception.InvalidUrlException
+import de.dkb.api.shortify.exception.NotFoundException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
@@ -44,9 +45,10 @@ class UrlShortenerService (
     }
 
     @Cacheable(value = ["shortUrls"], key = "#shortCode")
-    fun getLongUrl(shortCode: String): String? {
+    fun getLongUrl(shortCode: String): String {
         val shortUrl = "$baseUrl/$shortCode"
         return urlMappingRepository.findByShortUrl(shortUrl)?.longUrl
+            ?: throw NotFoundException("Short URL not found for code: $shortCode")
     }
 
     private fun isValidUrl(url: String): Boolean {

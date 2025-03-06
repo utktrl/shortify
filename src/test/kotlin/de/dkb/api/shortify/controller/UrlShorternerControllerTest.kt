@@ -35,7 +35,7 @@ class UrlShortenerControllerTest {
     @Test
     fun `should return long URL when short code exists`() {
         val shortCode = "abc123"
-        val longUrl = "https://example.com"
+        val longUrl = "https://dkb.de"
         `when`(urlShortenerService.getLongUrl(shortCode)).thenReturn(longUrl)
 
         val response = controller.urlLookup(shortCode)

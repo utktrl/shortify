@@ -17,32 +17,39 @@ class UrlShortenerService (
     private val urlMappingRepository: UrlMappingRepository
 ) {
 
-    @Value("\${app.base-url}")  // Inject the base URL from configuration
+
+
+    @Value("\${app.base-url}")
     private lateinit var baseUrl: String
+
+    /**
+     * Shorten URL and save it to the Database
+     */
 
     fun shortenUrl(longUrl: String): String {
         if (!isValidUrl(longUrl)) {
             throw InvalidUrlException("Invalid URL format. Please provide a valid URL.")
         }
 
-        // Check if the longUrl already exists
         val existingMapping = urlMappingRepository.findByLongUrl(longUrl)
         if (existingMapping != null) {
             return existingMapping.shortUrl
         }
 
-        // Generate a random short code
         val hash = sha256(longUrl)
         val sha256Encoded = base62Encode(hash)
         val shortCode = random7Chars(sha256Encoded)
         val shortUrl = "$baseUrl/$shortCode"
 
-        // Save to Database
         val urlMapping = UrlMapping(longUrl = longUrl, shortUrl = shortUrl)
         urlMappingRepository.save(urlMapping)
 
         return shortUrl
     }
+
+    /**
+     * Get long URL, if necessary from the cache
+     */
 
     @Cacheable(value = ["shortUrls"], key = "#shortCode")
     fun getLongUrl(shortCode: String): String {
@@ -62,16 +69,13 @@ class UrlShortenerService (
         return (uri.scheme == "http" || uri.scheme == "https") && !uri.host.isNullOrEmpty()
     }
 
-    // Base62 characters
     private val base62Chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray()
 
-    // Function to hash the URL using SHA-256
     private fun sha256(input: String): String {
         val bytes = MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
         return bytes.joinToString("") { "%02x".format(it) }
     }
 
-    // Function to encode a hex string to Base62
     private fun base62Encode(hex: String): String {
         var value = BigInteger(hex, 16)
         val result = StringBuilder()
@@ -83,7 +87,6 @@ class UrlShortenerService (
         return result.reverse().toString()
     }
 
-    // Function to get a random 7-character substring
     private fun random7Chars(input: String): String {
         val random = Random
         val startIndex = random.nextInt(input.length - 7)
